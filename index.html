@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeCapital - Factoring Management System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-box">
+            <h1 class="logo-large">WeCapital</h1>
+            <p class="login-subtitle">Factoring Management System</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="text" id="loginUsername" placeholder="Username" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                </div>
+                <div class="form-group">
+                    <select id="loginRole" required>
+                        <option value="">Select Role</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Accounting">Accounting</option>
+                        <option value="Factoring">Factoring</option>
+                        <option value="Under">Under</option>
+                        <option value="Treasury">Treasury</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="hidden">
+        
+        <!-- Header -->
+        <header class="main-header">
+            <div class="container">
+                <div class="header-content">
+                    <h1 class="logo">WeCapital</h1>
+                    <nav class="main-nav">
+                        <a href="#" data-section="dashboard" class="nav-link active">Dashboard</a>
+                        <a href="#" data-section="carriers" class="nav-link">Carriers</a>
+                        <a href="#" data-section="brokers" class="nav-link">Brokers</a>
+                        <a href="#" data-section="invoices" class="nav-link">Invoices</a>
+                        <a href="#" data-section="reserve" class="nav-link">Reserve</a>
+                        <a href="#" data-section="unfactored" class="nav-link">Unfactored</a>
+                        <a href="#" data-section="collections" class="nav-link">Collections</a>
+                        <a href="#" data-section="reports" class="nav-link">Reports</a>
+                    </nav>
+                    <div class="user-section">
+                        <span id="currentUser" class="user-name">User</span>
+                        <button id="btnLogout" class="btn-logout">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <!-- Dashboard -->
+            <section id="dashboard" class="content-section active">
+                <div class="container">
+                    <h2>Dashboard</h2>
+                    
+                    <!-- Global Search -->
+                    <div class="search-box">
+                        <input type="text" id="globalSearch" placeholder="🔍 Search by DOT#, Carrier Name, Invoice#, Load#..." class="search-input">
+                        <div id="searchResults" class="search-results hidden"></div>
+                    </div>
+
+                    <!-- KPIs -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-label">Today's Funding</div>
+                            <div class="kpi-value" id="kpiTodayFunding">$0.00</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Month's Funding</div>
+                            <div class="kpi-value" id="kpiMonthFunding">$0.00</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Total A/R</div>
+                            <div class="kpi-value" id="kpiTotalAR">$0.00</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Total Reserve</div>
+                            <div class="kpi-value" id="kpiTotalReserve">$0.00</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Unfactored</div>
+                            <div class="kpi-value" id="kpiUnfactored">$0.00</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Active Invoices</div>
+                            <div class="kpi-value" id="kpiActiveInvoices">0</div>
+                        </div>
+                        <div class="kpi-card kpi-danger">
+                            <div class="kpi-label">Bad Debt (+90 Days)</div>
+                            <div class="kpi-value" id="kpiBadDebt">$0.00</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Carriers -->
+            <section id="carriers" class="content-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Carriers Management</h2>
+                        <div class="action-buttons">
+                            <button id="btnImportCarriers" class="btn btn-secondary">Import CSV</button>
+                            <button id="btnAddCarrier" class="btn btn-primary">Add Carrier</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>DOT #</th>
+                                    <th>Name</th>
+                                    <th>EIN/Tax ID</th>
+                                    <th>Contact</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Location</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="carriersTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Brokers -->
+            <section id="brokers" class="content-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Brokers Management</h2>
+                        <div class="action-buttons">
+                            <button id="btnImportBrokers" class="btn btn-secondary">Import CSV</button>
+                            <button id="btnAddBroker" class="btn btn-primary">Add Broker</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>MC #</th>
+                                    <th>Name</th>
+                                    <th>EIN/Tax ID</th>
+                                    <th>Contact</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Total A/R</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="brokersTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Invoices -->
+            <section id="invoices" class="content-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Invoices / Loads</h2>
+                        <button id="btnAddInvoice" class="btn btn-primary">Create Invoice</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Invoice #</th>
+                                    <th>Load #</th>
+                                    <th>Carrier</th>
+                                    <th>Broker</th>
+                                    <th>Load Value</th>
+                                    <th>Funded Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoicesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reserve -->
+            <section id="reserve" class="content-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Reserve Management</h2>
+                        <button id="btnAddReserve" class="btn btn-primary">Create Reserve Entry</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Carrier</th>
+                                    <th>Invoice #</th>
+                                    <th>Amount</th>
+                                    <th>Reason</th>
+                                    <th>Date Created</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reserveTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Unfactored -->
+            <section id="unfactored" class="content-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Unfactored Payments</h2>
+                        <button id="btnAddUnfactored" class="btn btn-primary">Add Entry</button>
+                    </div>
+                    <div class="kpi-single">
+                        <div class="kpi-label">Total Unfactored Balance</div>
+                        <div class="kpi-value" id="totalUnfactoredBalance">$0.00</div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Type</th>
+                                    <th>Reference</th>
+                                    <th>Memo</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="unfactoredTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Collections -->
+            <section id="collections" class="content-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Credit & Collections</h2>
+                        <button id="btnImportPayments" class="btn btn-primary">Import Payments CSV</button>
+                    </div>
+                    
+                    <h3>A/R by Broker</h3>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Broker</th>
+                                    <th>Total A/R</th>
+                                    <th>Current</th>
+                                    <th>30 Days</th>
+                                    <th>60 Days</th>
+                                    <th>90+ Days</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="arByBrokerTableBody"></tbody>
+                        </table>
+                    </div>
+
+                    <h3 class="mt-40">Outstanding Invoices</h3>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Invoice #</th>
+                                    <th>Broker</th>
+                                    <th>Amount</th>
+                                    <th>Days Outstanding</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="outstandingInvoicesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports -->
+            <section id="reports" class="content-section">
+                <div class="container">
+                    <h2>Reports</h2>
+                    <div class="reports-grid">
+                        
+                        <div class="report-card">
+                            <h3>Daily Funding Report</h3>
+                            <p>QuickBooks Journal Entry format</p>
+                            <div class="form-group">
+                                <input type="date" id="dailyFundingDate" class="input-sm">
+                            </div>
+                            <div class="report-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="app.generateReport('dailyFunding', 'csv')">CSV</button>
+                                <button class="btn btn-sm btn-secondary" onclick="app.generateReport('dailyFunding', 'excel')">Excel</button>
+                            </div>
+                        </div>
+
+                        <div class="report-card">
+                            <h3>Fees Report</h3>
+                            <p>All factoring and transaction fees</p>
+                            <div class="form-group">
+                                <input type="date" id="feesStartDate" class="input-sm" placeholder="Start">
+                                <input type="date" id="feesEndDate" class="input-sm" placeholder="End">
+                            </div>
+                            <div class="report-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="app.generateReport('fees', 'csv')">CSV</button>
+                                <button class="btn btn-sm btn-secondary" onclick="app.generateReport('fees', 'excel')">Excel</button>
+                            </div>
+                        </div>
+
+                        <div class="report-card">
+                            <h3>Reserve Report</h3>
+                            <p>Current reserve balances by carrier</p>
+                            <div class="report-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="app.generateReport('reserve', 'csv')">CSV</button>
+                                <button class="btn btn-sm btn-secondary" onclick="app.generateReport('reserve', 'pdf')">PDF</button>
+                            </div>
+                        </div>
+
+                        <div class="report-card">
+                            <h3>Unfactored Report</h3>
+                            <p>Unidentified and overpayments</p>
+                            <div class="report-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="app.generateReport('unfactored', 'csv')">CSV</button>
+                            </div>
+                        </div>
+
+                        <div class="report-card">
+                            <h3>A/R Aging Report</h3>
+                            <p>Accounts receivable by aging bucket</p>
+                            <div class="report-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="app.generateReport('ar', 'csv')">CSV</button>
+                                <button class="btn btn-sm btn-secondary" onclick="app.generateReport('ar', 'pdf')">PDF</button>
+                            </div>
+                        </div>
+
+                        <div class="report-card">
+                            <h3>Bad Debt Report</h3>
+                            <p>Invoices 90+ days overdue</p>
+                            <div class="report-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="app.generateReport('badDebt', 'csv')">CSV</button>
+                                <button class="btn btn-sm btn-secondary" onclick="app.generateReport('badDebt', 'pdf')">PDF</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modal Container -->
+    <div id="modalContainer"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
